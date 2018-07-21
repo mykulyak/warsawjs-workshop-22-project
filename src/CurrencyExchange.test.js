@@ -93,3 +93,40 @@ test('getCurrencyNames zwraca listę kodów walut zapodanych w konstruktorze', (
   ]);
   expect(exchanger.getCurrencyNames()).toEqual(['USD', 'EUR']);
 });
+
+describe('getExchangeRate', () => {
+  let exchanger;
+
+  beforeEach(() => {
+    exchanger = new CurrencyExchange([
+      { code: 'USD', buy: 3, sell: 4 },
+      { code: 'EUR', buy: 4, sell: 5 }
+    ]);
+  });
+
+  afterEach(() => {
+    exchanger = null;
+  });
+
+  test('powinna być funkcją', () => {
+    expect(typeof exchanger.getExchangeRate).toBe('function');
+  });
+
+  test('powinna zwracać kursy wymiany dla zadanej waluty', () => {
+    expect(exchanger.getExchangeRate('USD')).toEqual({
+      buy: 3, sell: 4
+    });
+  });
+
+  test('powinna zwracać null jeśli takiej waluty nie ma', () => {
+    expect(exchanger.getExchangeRate('XYZ')).toBeNull();
+  });
+
+  test('zmiany w zwróconych obiektach nie powinny wpływać na własne dane', () => {
+    const rate1 = exchanger.getExchangeRate('USD');
+    expect(rate1).toEqual({ buy: 3, sell: 4 });
+    rate1.buy = 10;
+
+    expect(exchanger.getExchangeRate('USD')).toEqual({ buy: 3, sell: 4 });
+  });
+});

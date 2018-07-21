@@ -25,4 +25,11 @@ export default class CurrencyExchange {
   getCurrencyNames() {
     return this.names;
   }
+
+  getExchangeRate(name) {
+    // Object.assign({}, this.rates[name]) || null;  <--- Q: dlaczego nie to ?
+    return this.rates.hasOwnProperty(name)
+      ? Object.assign({}, this.rates[name])
+      : null;
+  }
 }
