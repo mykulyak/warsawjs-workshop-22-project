@@ -173,3 +173,46 @@ describe('buy', () => {
     expect(anotherExchange.buy('USD', 100)).toBeCloseTo(310, 2);
   });
 });
+
+describe('sell', () => {
+  let exchanger;
+
+  beforeEach(() => {
+    exchanger = new CurrencyExchange([
+      { code: 'USD', buy: 3, sell: 4 },
+      { code: 'EUR', buy: 4, sell: 5 },
+      { code: 'GBP', buy: 8, sell: 10 }
+    ]);
+  });
+
+  afterEach(() => {
+    exchanger = null;
+  });
+  
+  test('jest funkcją', () => {
+    expect(typeof exchanger.sell).toBe('function');
+  });
+
+  test.each([
+    [undefined, undefined],
+    [-100, undefined],
+    ['EUR', undefined],
+    ['EUR', -100]
+  ])('rzuca wyjątek jeśli zapodano nieprawidłową nazwę waluty lub kwotę (%p %p)', (...args) => {
+    expect(() => {
+      exchanger.sell(...args);
+    }).toThrow();
+  });
+
+  test('zwraca kwotę do zapłacenia dla zadanego zestawu parametrów', () => {
+    expect(exchanger.sell('EUR', 10)).toBeCloseTo(49.99, 2);
+    expect(exchanger.sell('USD', 100)).toBeCloseTo(399.99, 2);
+  });
+
+  test('kwota do zapłacenia równa się kwota * kurs - prowizja', () => {
+    const anotherExchange = new CurrencyExchange([
+      { code: 'USD', buy: 3, sell: 4 },
+    ], { buyFee: 10, sellFee: 20 });
+    expect(anotherExchange.sell('USD', 100)).toBeCloseTo(380, 2);
+  });
+});
