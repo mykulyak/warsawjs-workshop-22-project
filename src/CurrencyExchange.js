@@ -32,4 +32,12 @@ export default class CurrencyExchange {
       ? Object.assign({}, this.rates[name])
       : null;
   }
+
+  buy(currency, amount) {
+    const amountNum = Number(amount);
+    if (!this.rates[currency] || isNaN(amountNum) || amountNum <= 0) {
+      throw new Error('Invalid currency or amount');
+    }
+    return this.rates[currency].buy * amount + this.buyFee;
+  }
 }
