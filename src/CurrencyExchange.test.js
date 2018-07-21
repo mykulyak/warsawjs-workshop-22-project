@@ -216,3 +216,45 @@ describe('sell', () => {
     expect(anotherExchange.sell('USD', 100)).toBeCloseTo(380, 2);
   });
 });
+
+describe('exchange', () => {
+  let exchanger;
+
+  beforeEach(() => {
+    exchanger = new CurrencyExchange([
+      { code: 'USD', buy: 3, sell: 4 },
+      { code: 'EUR', buy: 4, sell: 5 },
+      { code: 'GBP', buy: 8, sell: 10 }
+    ], { buyFee: 10, sellFee: 5 });
+  });
+
+  afterEach(() => {
+    exchanger = null;
+  });
+  
+  test('jest funkcją', () => {
+    expect(typeof exchanger.exchange).toBe('function');
+  });
+
+  test.each([
+    [undefined, undefined, null],
+    ['eur', 10, 'USD'],
+    ['EUR', 'USD', 10],
+  ])('rzuca wyjątek jeśli zapodano jej nieprawidłowe parametry (%p %p -> %p)', (...args) => {
+    expect(() => {
+      exchanger.exchange(...args);
+    }).toThrow();
+  });
+
+  test.each([
+    ['USD', 100, 'EUR', 57],
+    ['USD', 100, 'GBP', 28.5]
+  ])(
+    'prawidłowo oblicza kwotę dla zadanych parametrów (%p %p) -> %p',
+    (fromCurrency, fromAmount, toCurrency, expectedAmount) => {
+      expect(
+        exchanger.exchange(fromCurrency, fromAmount, toCurrency)
+      ).toBeCloseTo(expectedAmount, 2);
+    }
+  );
+});

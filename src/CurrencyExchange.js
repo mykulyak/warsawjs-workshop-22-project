@@ -48,4 +48,19 @@ export default class CurrencyExchange {
     }
     return this.rates[currency].sell * amount - this.sellFee;
   }
+
+  exchange(fromCurrency, fromAmount, toCurrency) {
+    const amountNum = Number(fromAmount);
+    if (
+      fromCurrency === toCurrency
+      || !this.rates[fromCurrency]
+      || !this.rates[toCurrency]
+      || isNaN(amountNum)
+      || amountNum <= 0
+    ) {
+      throw new Error('Invalid parameters');
+    }
+    const plnAmount = this.rates[fromCurrency].buy * fromAmount - this.sellFee;
+    return (plnAmount - this.buyFee) / this.rates[toCurrency].sell;
+  }
 }
