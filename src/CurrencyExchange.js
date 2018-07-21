@@ -21,4 +21,8 @@ export default class CurrencyExchange {
     this.buyFee = buyFee;
     this.sellFee = sellFee;
   }
+
+  getCurrencyNames() {
+    return this.names;
+  }
 }

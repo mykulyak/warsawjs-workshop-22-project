@@ -78,3 +78,18 @@ describe('constructor', () => {
     expect(exchanger.sellFee).toBeCloseTo(0.01, 2);
   });
 });
+
+test('ma metodę getCurrencyNames', () => {
+  const exchanger = new CurrencyExchange([
+    { code: 'EUR', buy: 4, sell: 5 }
+  ]);
+  expect(typeof exchanger.getCurrencyNames).toBe('function');
+});
+
+test('getCurrencyNames zwraca listę kodów walut zapodanych w konstruktorze', () => {
+  const exchanger = new CurrencyExchange([
+    { code: 'USD', buy: 3, sell: 4 },
+    { code: 'EUR', buy: 4, sell: 5 }
+  ]);
+  expect(exchanger.getCurrencyNames()).toEqual(['USD', 'EUR']);
+});
