@@ -35,3 +35,4 @@ w trybie śledzenia
 ```
 > npm test:watch
 ```
+
