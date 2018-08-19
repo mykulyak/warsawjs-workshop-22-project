@@ -1,4 +1,5 @@
 import { titleCase } from './utils';
+import { OPERATION_TYPE, ALLOWED_OPERATIONS } from './consts';
 
 const API_URL = `http://api.nbp.pl/api/exchangerates/tables/C/?format=json`;
 
@@ -44,13 +45,31 @@ export default class Backend {
     global.console.warn('Backend', { operation, buyCurrency, sellCurrency, amount });
     return new Promise((resolve, reject) => {
       global.setTimeout(() => {
-        const r = Math.random();
-        if (r > 0) { // increate to make error happen more often
-          resolve({ });
-        } else {
+        if (!ALLOWED_OPERATIONS.includes(operation)) {
           reject(new Error());
+          return;
         }
-      }, 2000);
+        if (operation !== OPERATION_TYPE.SELL) {
+          const buyInfo = this.currencies.find(el => el.code === buyCurrency);
+          if (!buyInfo) {
+            reject(new Error());
+            return;
+          }
+        }
+        if (operation !== OPERATION_TYPE.BUY) {
+          const sellInfo = this.currencies.find(el => el.code === sellCurrency);
+          if (!sellInfo) {
+            reject(new Error());
+            return;
+          }
+        }
+        const money = Number(amount);
+        if (isNaN(money) || money <= 0) {
+          reject(new Error());
+          return;
+        }
+        resolve();
+      }, 200);
     });
   }
 }
